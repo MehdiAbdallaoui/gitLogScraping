@@ -48,15 +48,8 @@ do
 #Select just lines containing authors' informations
 if [[ "$line" = "Author: "* ]];
 then
-
-#Skip if the email has already been saved before
-if [[ $(grep "$line" dev_emails.txt) ]];
-then
-	echo "Email already saved!"
-else
 	echo $line >> dev_emails.txt
 	echo "Email saved successfully!"
-fi
 fi
 done < ${arr[0]}_log.txt
 rm -rf ${arr[0]}_log.txt
