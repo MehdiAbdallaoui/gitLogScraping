@@ -23,14 +23,16 @@ echo "App path is : $appPath"
 
 #Display and append the log within a log text file
 git log > ../${arr[0]}_log.txt
-echo "Git log content has been pasted in ${arr[0]}_log.txt successfully!"
+[ "$?" -eq "0" ] && echo "Git log content has been pasted in ${arr[0]}_log.txt successfully!" || echo "Pasting log within ${arr[0]}_log.txt failed!"
+sleep 5
 
 #Access the parent directory
 cd $path
 
 #Get rid of the app directory
 rm -rf $appPath
-echo "Cloned app repository deleted successfully!"
+[ "$?" -eq "0" ] && echo "Cloned app repository deleted successfully!" || echo "Deleting app repository failed!"
+sleep 5
 
 #Retrieve emails from log text file
 while read line
@@ -52,6 +54,3 @@ fi
 done < ${arr[0]}_log.txt
 rm -rf ${arr[0]}_log.txt
 done < gitLinks.txt
-
-totalEmails=(`wc -l dev_emails.txt`)
-echo "Total emails scraped : $totalEmails"
