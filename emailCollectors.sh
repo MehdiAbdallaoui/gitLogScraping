@@ -1,0 +1,57 @@
+#!/bin/bash
+
+path=$(pwd)
+rm -rf dev_emails.txt
+
+while read gitURL
+do
+echo "Start cloning : "
+git clone $gitURL
+
+#split the URL on slash delimiter
+tmp=(`echo $gitURL | tr '/' ' '`)
+
+#split the last part of the URL on point delimiter to do away with git extension
+arr=(`echo ${tmp[3]} | tr '.' ' '`)
+
+#Retrieve the created app directory's path
+appPath="${path}/${arr[0]}"
+
+#Access the app directory
+cd $appPath
+echo "App path is : $appPath"
+
+#Display and append the log within a log text file
+git log > ../${arr[0]}_log.txt
+echo "Git log content has been pasted in ${arr[0]}_log.txt successfully!"
+
+#Access the parent directory
+cd $path
+
+#Get rid of the app directory
+rm -rf $appPath
+echo "Cloned app repository deleted successfully!"
+
+#Retrieve emails from log text file
+while read line
+do
+
+#Select just lines containing authors' informations
+if [[ "$line" = "Author: "* ]];
+then
+
+#Skip if the email has already been saved before
+if [[ $(grep "$line" dev_emails.txt) ]];
+then
+	echo "Email already saved!"
+else
+	echo $line >> dev_emails.txt
+	echo "Email saved successfully!"
+fi
+fi
+done < ${arr[0]}_log.txt
+rm -rf ${arr[0]}_log.txt
+done < gitLinks.txt
+
+totalEmails=(`wc -l dev_emails.txt`)
+echo "Total emails scraped : $totalEmails"
