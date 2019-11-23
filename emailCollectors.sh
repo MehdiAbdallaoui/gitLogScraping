@@ -7,6 +7,13 @@ while read gitURL
 do
 echo "Start cloning : "
 git clone $gitURL
+if [[ "$?" -ne "0" ]];
+then
+	break
+	echo "Clone failed!"
+else
+	echo "Cloned sucessfully!"
+fi
 
 #split the URL on slash delimiter
 tmp=(`echo $gitURL | tr '/' ' '`)
