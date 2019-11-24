@@ -54,3 +54,8 @@ fi
 done < ${arr[0]}_log.txt
 rm -rf ${arr[0]}_log.txt
 done < gitLinks.txt
+
+#Count and display number of scraped emails
+totalEmails=(`wc -l dev_emails.txt`)
+echo "Total emails scraped : $totalEmails"
+sleep 8
