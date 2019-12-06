@@ -48,7 +48,8 @@ do
 #Store all emails into all_contributors.txt
 if [[ "$line" = "Author: "* ]];
 then
-	echo $line >> all_contributors.txt
+	tmp=(`echo $line | tr ':' ' '`)
+	echo $tmp >> all_contributors.txt
 fi
 done < ${arr[0]}_log.txt
 
@@ -63,7 +64,8 @@ if [[ $(grep "$line" dev_emails.txt) ]];
 then
 	echo "Email already exists!"
 else
-	echo $line >> dev_emails.txt
+	tmp=(`echo $line | tr ':' ' '`)
+	echo $tmp >> dev_emails.txt
 	echo "Email saved successfully!"
 fi
 fi
