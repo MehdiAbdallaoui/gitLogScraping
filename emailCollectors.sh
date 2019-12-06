@@ -1,7 +1,7 @@
 #!/bin/bash
 
 path=$(pwd)
-rm -rf dev_emails.txt
+rm -rf dev_emails.txt all_contributors.txt
 
 while read gitURL
 do
@@ -41,14 +41,24 @@ rm -rf $appPath
 [ "$?" -eq "0" ] && echo "Cloned app repository deleted successfully!" || echo "Deleting app repository failed!"
 sleep 5
 
-#Retrieve emails from log text file
+#Retrieve emails from log text file and store them all without eliminating the repeated ones
 while read line
 do
 
-#Select just lines containing authors' informations
+#Store all emails into all_contributors.txt
 if [[ "$line" = "Author: "* ]];
 then
-if [[ $(grep "$line" dev_emails.txt)]];
+	echo $line >> all_contributors.txt
+fi
+done < ${arr[0]}_log.txt
+
+while read line
+do
+
+#Select just lines containing authors' informations and eliminate the repeated ones
+if [[ "$line" = "Author: "* ]];
+then
+if [[ $(grep "$line" dev_emails.txt) ]];
 then
 	echo "Email already exists!"
 else
