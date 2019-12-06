@@ -75,3 +75,12 @@ done < gitLinks.txt
 totalEmails=(`wc -l dev_emails.txt`)
 echo "Total emails scraped : $totalEmails"
 sleep 8
+
+
+#Data analysis
+echo "========================Top 10 contributors========================"
+
+#Most present contributors' emails
+sort all_contributors.txt | uniq -c | sort -r | head -10
+
+echo "==================================================================="
