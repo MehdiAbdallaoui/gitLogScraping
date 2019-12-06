@@ -58,6 +58,7 @@ do
 #Select just lines containing authors' informations and eliminate the repeated ones
 if [[ "$line" = "Author: "* ]];
 then
+
 if [[ $(grep "$line" dev_emails.txt) ]];
 then
 	echo "Email already exists!"
