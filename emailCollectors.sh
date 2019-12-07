@@ -48,8 +48,8 @@ do
 #Store all emails into all_contributors.txt
 if [[ "$line" = "Author: "* ]];
 then
-	tmp=(`echo $line | tr ':' ' '`)
-	echo $tmp >> all_contributors.txt
+	tmp=($(echo $line | tr ":" " "))
+	echo ${tmp[@]:1} >> all_contributors.txt
 fi
 done < ${arr[0]}_log.txt
 
@@ -64,14 +64,19 @@ if [[ $(grep "$line" dev_emails.txt) ]];
 then
 	echo "Email already exists!"
 else
-	tmp=(`echo $line | tr ':' ' '`)
-	echo $tmp >> dev_emails.txt
+	tmp=($(echo $line | tr ":" " "))
+	echo ${tmp[@]:1} >> dev_emails.txt
 	echo "Email saved successfully!"
 fi
 fi
 done < ${arr[0]}_log.txt
 rm -rf ${arr[0]}_log.txt
 done < gitLinks.txt
+
+#Sort emails alphabetically
+sort dev_emails.txt > sorted_dev_emails.txt
+cp sorted_dev_emails.txt dev_emails.txt
+rm -rf sorted_dev_emails.txt
 
 #Count and display number of scraped emails
 totalEmails=(`wc -l dev_emails.txt`)
@@ -80,9 +85,9 @@ sleep 8
 
 
 #Data analysis
-echo "========================Top 10 contributors========================"
+echo "===========================Top 10 contributors==========================="
 
 #Most present contributors' emails
-sort all_contributors.txt | uniq -c | sort -r | head -10
+cat all_contributors.txt | sort | uniq -c | sort -nr | head -10
 
-echo "==================================================================="
+echo "========================================================================="
