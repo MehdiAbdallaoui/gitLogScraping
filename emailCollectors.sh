@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #PACKAGE REQUIRED TO PLOT GRAPHS: sudo pip3 install termgraph
-
+#YOU CAN ADD GIT REPOSITORIES LINKS INTO THE gitLinks.txt file
 
 path=$(pwd)
 rm -rf cleaned_emails.txt all_contributors.txt top_10.dat emails_rank.txt
