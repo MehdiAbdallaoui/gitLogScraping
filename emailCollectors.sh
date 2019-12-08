@@ -1,7 +1,10 @@
 #!/bin/bash
 
+#PACKAGE REQUIRED TO PLOT GRAPHS: sudo pip3 install termgraph
+
+
 path=$(pwd)
-rm -rf dev_emails.txt all_contributors.txt
+rm -rf cleaned_emails.txt all_contributors.txt top_10.dat emails_rank.txt
 
 while read gitURL
 do
@@ -31,7 +34,7 @@ echo "App path is : $appPath"
 #Display and append the log within a log text file
 git log > ../${arr[0]}_log.txt
 [ "$?" -eq "0" ] && echo "Git log content has been pasted in ${arr[0]}_log.txt successfully!" || echo "Pasting log within ${arr[0]}_log.txt failed!"
-sleep 5
+sleep 2
 
 #Access the parent directory
 cd $path
@@ -39,7 +42,7 @@ cd $path
 #Get rid of the app directory
 rm -rf $appPath
 [ "$?" -eq "0" ] && echo "Cloned app repository deleted successfully!" || echo "Deleting app repository failed!"
-sleep 5
+sleep 2
 
 #Retrieve emails from log text file and store them all without eliminating the repeated ones
 while read line
@@ -64,8 +67,7 @@ if [[ $(grep "$line" dev_emails.txt) ]];
 then
 	echo "Email already exists!"
 else
-	tmp=($(echo $line | tr ":" " "))
-	echo ${tmp[@]:1} >> dev_emails.txt
+	echo $line >> dev_emails.txt
 	echo "Email saved successfully!"
 fi
 fi
@@ -73,21 +75,43 @@ done < ${arr[0]}_log.txt
 rm -rf ${arr[0]}_log.txt
 done < gitLinks.txt
 
+#Clean emails by removing Authors:
+while read line
+do
+
+tmp=($(echo $line | tr ":" " "))
+echo ${tmp[@]:1} >> cleaned_emails.txt
+
+done < dev_emails.txt
+rm -rf dev_emails.txt
+
 #Sort emails alphabetically
-sort dev_emails.txt > sorted_dev_emails.txt
-cp sorted_dev_emails.txt dev_emails.txt
+sort cleaned_emails.txt > sorted_dev_emails.txt
+cp sorted_dev_emails.txt cleaned_emails.txt
 rm -rf sorted_dev_emails.txt
 
 #Count and display number of scraped emails
-totalEmails=(`wc -l dev_emails.txt`)
+totalEmails=(`wc -l cleaned_emails.txt`)
 echo "Total emails scraped : $totalEmails"
-sleep 8
-
+sleep 4
 
 #Data analysis
+#Most serious contributors
 echo "===========================Top 10 contributors==========================="
-
-#Most present contributors' emails
-cat all_contributors.txt | sort | uniq -c | sort -nr | head -10
-
+cat all_contributors.txt | sort | uniq -c | sort -nr | head -10 >> top_10.dat
+cat top_10.dat
 echo "========================================================================="
+
+#Store best ranked emails' occurences into emails_rank.txt
+i=1
+while read top
+do
+
+occ=($(echo $top | tr " " "\n"))
+echo "$i: ${occ[0]}" >> emails_rank.txt
+((i=i+1))
+
+done < top_10.dat
+
+#Plot a graph using termgraph
+termgraph --title "Contributors Leaderboard" emails_rank.txt --color 'yellow' --format '{:.0f}'
